@@ -25,23 +25,27 @@ namespace qdee {
         //% block="Green"
         Green = 0x02,
         //% block="Blue"
-        Blue = 0x03  
+        Blue = 0x03
     }
 
     export enum extPins {
-        //% block="PA6"
+        //% block="port6-3"
         pa6 = 0x06,
-        //% block="PA7"
+        //% block="port6-4"
         pa7 = 0x07,
-        //% block="PB0"
+        //% block="port8-3"
         pb0 = 0x10,
-        //% block="PB1"
+        //% block="port8-4"
         pb1 = 0x11,
-        //% block="PB10"        
+        //% block="port7-4"
+        pa2 = 0x02,
+        //% block="port7-3"
+        pa3 = 0x03,
+        //% block="port10-4"
         pb10 = 0x1a,
-        //% block="PB11"
-        pb11 = 0x11,
-        //% block="PC13"
+        //% block="port10-3"
+        pb11 = 0x1b,
+        //% block="port3-4"
         pc13 = 0x23
     }
 
@@ -75,6 +79,19 @@ namespace qdee {
         Servo1 = 0x01,
         //% block="servo 2"
         Servo2 = 0x02
+        //% block="servo 3"
+        Servo3 = 0x03
+        //% block="servo 4"
+        Servo4 = 0x04
+        //% block="servo 5"
+        Servo5 = 0x05
+        //% block="servo 6"
+        Servo6 = 0x06
+        //% block="servo 7"
+        Servo7 = 0x07
+        //% block="servo 8"
+        Servo8 = 0x08
+
     }
 
     export enum ultrasonicPort {
@@ -195,7 +212,7 @@ namespace qdee {
         R6 = 90,
         //% block="R7"
         R7 = 66,
-        //% block="R8"     
+        //% block="R8"
         R8 = 74,
         //% block="R9"
         R9 = 82
@@ -306,7 +323,7 @@ namespace qdee {
         enableLightSensor(true);
         control.waitMicros(100);
     }
-   
+
     /**
 	 * Initialize Light belt
 	 */
@@ -403,22 +420,22 @@ namespace qdee {
                  let arg4Int: number = strToNumber(cmd.substr(7, 2));
                  let arg5Int: number = strToNumber(cmd.substr(9, 2));
                  let arg6Int: number = strToNumber(cmd.substr(11, 2));
-    
+
                  PA6_ad = arg1Int;
                  PA7_ad = arg2Int;
                  PB0_ad = arg3Int;
-                 PB1_ad = arg4Int;   
-    
+                 PB1_ad = arg4Int;
+
                  if (arg5Int != -1)
                  {
                     currentVoltage = Math.round(arg5Int*10353/200);
-                 }  
-    
+                 }
+
                  if (arg6Int != -1)
                  {
                   volume = arg6Int;
-                 }   
-                
+                 }
+
                 PA6 = checkADPortValue(arg1Int);
                 PA7 = checkADPortValue(arg2Int);
                 PB0 = checkADPortValue(arg3Int);
@@ -449,7 +466,7 @@ namespace qdee {
                     {
                         if (adress != 0) {
                             control.raiseEvent(MESSAGE_HEAD_STOP, 0);
-                        }    
+                        }
                         sendFlag = false;
                         adress = 0;
                     }
@@ -475,7 +492,7 @@ namespace qdee {
                                 cntIr = 0;
                                 control.raiseEvent(MESSAGE_HEAD_LONG, high);
                             }
-                        }                                   
+                        }
                     }
                 }
                 if (arg6Int != -1) {
@@ -486,7 +503,7 @@ namespace qdee {
                 }
                 if (arg8Int != -1) {
                     PB10 = arg8Int;
-                }    
+                }
 
         }
         if (cmd.compare("IROK") == 0) {
@@ -599,11 +616,11 @@ namespace qdee {
     /**
     * Set the angle of bus servo 1 to 8, range of -120~120 degree
     */
-    //% weight=96 blockId=qdee_setBusServo block="Set bus servo|port %port|index %index|angle(-120~120) %angle|duration(ms) %duration"
+    //% weight=96 blockId=qdee_setBusServo block="Set bus servo|port %port|servo %servo|angle(-120~120) %angle|duration(ms) %duration"
     //% angle.min=-120 angle.max=120
     //% inlineInputMode=inline
     //% subcategory=Control
-    export function qdee_setBusServo(port: busServoPort, index: number, angle: number, duration: number) {
+    export function qdee_setBusServo(port: busServoPort, servo: Servos, angle: number, duration: number) {
         angle = angle * -1;
         if (angle > 120 || angle < -120) {
             return;
@@ -621,7 +638,7 @@ namespace qdee {
         buf[4] = 0x01;
         buf[5] = duration & 0xff;
         buf[6] = (duration >> 8) & 0xff;
-        buf[7] = index;
+        buf[7] = servo;
         buf[8] = position & 0xff;
         buf[9] = (position >> 8) & 0xff;
         serial.writeBuffer(buf);
@@ -630,7 +647,7 @@ namespace qdee {
     /**
     * Set the number of the servo.
     */
-    //% weight=94 blockId=qdee_setBusServoNum block="Set bus servo|number %port|"
+    //% weight=94 blockId=qdee_setBusServoNum block="Set bus servo|index %index|"
     //% subcategory=Control
     export function qdee_setBusServoNum(index: number) {
         let buf = pins.createBuffer(5);
@@ -715,7 +732,7 @@ namespace qdee {
         buf[5] = speed1;
         serial.writeBuffer(buf);
     }
-    
+
     /**
    * Set fan speed
    * @param speed the speed of the fan in -100~100. eg: 80
@@ -772,27 +789,27 @@ namespace qdee {
             case 1:
                 basic.showIcon(IconNames.Heart);
                 break;
-            
+
             case 2:
                 basic.showIcon(IconNames.Yes);
                 break;
-            
+
             case 3:
                 basic.showIcon(IconNames.No);
                 break;
-            
+
             case 4:
                 basic.showIcon(IconNames.Happy)
                 break;
-            
+
             case 5:
                 basic.showIcon(IconNames.Sad)
                 break;
-            
+
             case 6:
                 basic.showIcon(IconNames.Angry)
                 break;
-            
+
             case 7:
             basic.showLeds(`
             . . # . .
@@ -802,7 +819,7 @@ namespace qdee {
             . . # . .
             `)
             break;
-            
+
             case 8:
             basic.showLeds(`
             . . # . .
@@ -812,7 +829,7 @@ namespace qdee {
             . . # . .
             `)
             break;
-            
+
             case 9:
             basic.showLeds(`
             . . # . .
@@ -822,7 +839,7 @@ namespace qdee {
             . . # . .
             `)
                 break;
-            
+
             case 10:
             basic.showLeds(`
             . . # . .
@@ -832,10 +849,10 @@ namespace qdee {
             . . # . .
             `)
                 break;
-            
+
         }
     }
-    
+
     /**
      * Do someting when Qdee receive custom ir code
      * @param address the message id
@@ -852,7 +869,7 @@ namespace qdee {
     * Let Qdee send ir custom data
     */
     //% weight=82 blockId=qdee_send_ir_data block="Let Qdee send custom ir|%address|code %num"
-    //% num.min=0 num.max=254  
+    //% num.min=0 num.max=254
     //% subcategory=IR
     export function qdee_send_ir_data(address: extAddress, num: number) {
         if (num < 0 || num > 254)
@@ -879,7 +896,7 @@ namespace qdee {
     export function onQdee_remote_ir_pressed(code: IRKEY, body: Action) {
         control.onEvent(MESSAGE_HEAD, code, body);
 }
-    
+
     /**
      * Do someting when remote-control longpress
      * @param code the ir key button that needs to be pressed
@@ -897,7 +914,7 @@ namespace qdee {
      * @param body code to run when event is raised
      */
     //% weight=76 blockId=onQdee_remote_no_ir block="on remote-control stop send"
-    //% subcategory=IR    
+    //% subcategory=IR
     export function onQdee_remote_no_ir(body: Action) {
         control.onEvent(MESSAGE_HEAD_STOP, 0, body);
     }
@@ -994,8 +1011,8 @@ namespace qdee {
     * Set ir enter learn mode
     * @param num number of the learn code in 1-10. eg: 1
     */
-    //% weight=70 blockId=qdee_ir_learn_mode block="Set ir enter learning mode,code number(1~10) %num|"   
-    //% num.min=1 num.max=10    
+    //% weight=70 blockId=qdee_ir_learn_mode block="Set ir enter learning mode,code number(1~10) %num|"
+    //% num.min=1 num.max=10
     //% subcategory=IR
     export function qdee_ir_learn_mode(num: number) {
         if (num < 1 || num > 10)
@@ -1015,7 +1032,7 @@ namespace qdee {
     * @param num number of the learn code in 1-10. eg: 1
     */
     //% weight=68 blockId=qdee_send_learn_data block="Let Qdee send ir learning code,code|number(1~10) %num|"
-    //% num.min=1 num.max=10  
+    //% num.min=1 num.max=10
     //% subcategory=IR
     export function qdee_send_learn_data(num: number) {
         if (num < 1 || num > 10)
@@ -1095,12 +1112,12 @@ namespace qdee {
     const DEFAULT_WTIME = 246;    // 27ms
     const DEFAULT_PROX_PPULSE = 0x87;    // 16us, 8 pulses
     const DEFAULT_POFFSET_UR = 0;       // 0 offset
-    const DEFAULT_POFFSET_DL = 0;       // 0 offset      
+    const DEFAULT_POFFSET_DL = 0;       // 0 offset
     const DEFAULT_CONFIG1 = 0x60;    // No 12x wait (WTIME) factor
     const DEFAULT_AILT = 0xFFFF;  // Force interrupt for calibration
     const DEFAULT_AIHT = 0;
     const DEFAULT_PERS = 0x11;    // 2 consecutive prox or ALS for int.
-    const DEFAULT_CONFIG2 = 0x01;    // No saturation interrupts or LED boost  
+    const DEFAULT_CONFIG2 = 0x01;    // No saturation interrupts or LED boost
     const DEFAULT_CONFIG3 = 0;       // Enable all photodiodes, no SAI
     const DEFAULT_LDRIVE = LED_DRIVE_100MA;
     const DEFAULT_AGAIN = AGAIN_4X;
@@ -1130,7 +1147,7 @@ namespace qdee {
     function InitColor(): boolean {
         let id = i2cread(APDS9960_ID);
         //  serial.writeLine("id:")
-        //  serial.writeNumber(id); 
+        //  serial.writeNumber(id);
         // if (!(id == APDS9960_ID_1 || id == APDS9960_ID_2)) {
         //     return false;
         // }
@@ -1342,11 +1359,11 @@ namespace qdee {
             case qdee_RGBValue.Red:
                 value = r;
                 break;
-            
+
             case qdee_RGBValue.Green:
                 value = g;
                 break;
-            
+
             case qdee_RGBValue.Blue:
                 value = b;
                 break;
@@ -1409,8 +1426,8 @@ namespace qdee {
     /**
     * Get the condition of the touch button,press return 1,or return 0
     */
-    //% weight=54 blockGap=20 blockId=qdee_touchButton block=" Touch button|port %port|is pressed"    
-    //% subcategory=Sensor    
+    //% weight=54 blockGap=20 blockId=qdee_touchButton block=" Touch button|port %port|is pressed"
+    //% subcategory=Sensor
     export function qdee_touchButton(port: touchKeyPort): boolean {
         let status: boolean = false;
         switch (port) {
@@ -1438,10 +1455,10 @@ namespace qdee {
 
     let distanceBak = 0;
     /**
-     * Get the distance of ultrasonic detection to the obstacle 
+     * Get the distance of ultrasonic detection to the obstacle
      */
     //% weight=52 blockId=qdee_ultrasonic  block="Ultrasonic|port %port|distance(cm)"
-    //% subcategory=Sensor    
+    //% subcategory=Sensor
     export function qdee_ultrasonic(port: ultrasonicPort): number {
         let trigPin: DigitalPin = DigitalPin.P1;
         let echoPin: DigitalPin = DigitalPin.P2;
@@ -1512,7 +1529,7 @@ namespace qdee {
     * Get the ad value of the knob moudule
     */
     //% weight=50 blockId=qdee_getKnobValue blockGap=50 block="Get knob|port %port|value(0~255)"
-    //% subcategory=Sensor    
+    //% subcategory=Sensor
     export function qdee_getKnobValue(port: knobPort): number {
         let adValue = 0;
         switch (port) {
@@ -1529,11 +1546,14 @@ namespace qdee {
         }
         return Math.round(adValue);
     }
-    
+
     /**
      * Set extension pins output high/low
      */
-    function qdee_ext_output(pin: number, out: number) {
+     //% weight=89 blockId=Set_ext_pin_output block="set ext pin output|pin %pin|out %out"
+     //% out.min=0 out.max=1
+     //% subcategory=Control
+    export function qdee_ext_output(pin: extPins, out: number) {
         let buf = pins.createBuffer(7);
         buf[0] = 0x55;
         buf[1] = 0x55;
@@ -1633,7 +1653,7 @@ namespace qdee {
         return type;
     }
 
-   
+
     /**
       * The distance from the ultrasonic obstacle to the standard command, which is sent to the mobile phone. The APP will indicate the distance of the ultrasonic obstacle.
       */
@@ -1692,7 +1712,7 @@ namespace qdee {
         cmdStr += "|$";
         return cmdStr;
     }
-    
+
     /**
 	 * Initialize RGB
 	 */
@@ -1713,21 +1733,21 @@ namespace qdee {
     export function qdee_setBrightness(brightness: number): void {
         lhRGBLight.setBrightness(brightness);
     }
-    
+
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
     //% weight=28 blockId=qdee_setPixelRGB block="Set|%lightoffset|color to %rgb"
-    //% subcategory=Coloured_lights    
+    //% subcategory=Coloured_lights
     export function qdee_setPixelRGB(lightoffset: QdeeLights, rgb: QdeeRGBColors) {
         lhRGBLight.setPixelColor(lightoffset, rgb);
     }
-    
+
     /**
      * Set RGB Color argument
      */
     //% weight=26 blockId=qdee_setPixelRGBArgs block="Set|%lightoffset|color to %rgb"
-    //% subcategory=Coloured_lights    
+    //% subcategory=Coloured_lights
     export function qdee_setPixelRGBArgs(lightoffset: QdeeLights, rgb: number) {
         lhRGBLight.setPixelColor(lightoffset, rgb);
     }
@@ -1736,7 +1756,7 @@ namespace qdee {
      * Display the colored lights, and set the color of the colored lights to match the use. After setting the color of the colored lights, the color of the lights must be displayed.
      */
     //% weight=24 blockId=qdee_showLight block="Show light"
-    //% subcategory=Coloured_lights    
+    //% subcategory=Coloured_lights
     export function qdee_showLight() {
         lhRGBLight.show();
     }
@@ -1745,7 +1765,7 @@ namespace qdee {
      * Clear the color of the colored lights and turn off the lights.
      */
     //% weight=22 blockGap=50 blockId=qdee_clearLight block="Clear light"
-    //% subcategory=Coloured_lights    
+    //% subcategory=Coloured_lights
     export function qdee_clearLight() {
         lhRGBLight.clear();
     }
@@ -1754,45 +1774,45 @@ namespace qdee {
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
     //% weight=20 blockGap=20 blockId=qdee_belt_setPixelRGB block="Set light belt|%lightoffset|color to %rgb"
-    //% subcategory=Coloured_lights    
+    //% subcategory=Coloured_lights
     export function qdee_belt_setPixelRGB(lightoffset: QdeeLightsBelt, rgb: QdeeRGBColors) {
         lhRGBLightBelt.setBeltPixelColor(lightoffset, rgb);
     }
-     
+
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
     //% weight=18 blockId=qdee_belt_setPixelRGBIndex block="Set light belt|%lightoffset|color to %rgb(1~9)"
-    //% subcategory=Coloured_lights    
+    //% subcategory=Coloured_lights
     export function qdee_belt_setPixelRGBIndex(lightoffset: QdeeLightsBelt, rgb: number) {
         lhRGBLightBelt.setBeltPixelColor(lightoffset, rgb);
     }
-    
+
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
     //% weight=16 blockId=qdee_belt_setPixelRGBSingle block="Set light belt index(0~29)|%lightoffset|color to %rgb"
-    //% lightoffset.min=0  lightoffset.max=29 
-    //% subcategory=Coloured_lights    
+    //% lightoffset.min=0  lightoffset.max=29
+    //% subcategory=Coloured_lights
     export function qdee_belt_setPixelRGBSingle(lightoffset: number, rgb: QdeeRGBColors) {
         lhRGBLightBelt.singleSetBeltPixelColor(lightoffset, rgb);
     }
-     
+
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
     //% weight=14 blockId=qdee_belt_setPixelRGBSingleRGBIndex block="Set light belt index(0~29)|%lightoffset|color to %rgb(1~9)"
-    //% lightoffset.min=0  lightoffset.max=29 
-    //% subcategory=Coloured_lights    
+    //% lightoffset.min=0  lightoffset.max=29
+    //% subcategory=Coloured_lights
     export function qdee_belt_setPixelRGBSingleRGBIndex(lightoffset: number, rgb: number) {
         lhRGBLightBelt.singleSetBeltPixelColor(lightoffset, rgb);
     }
-    
+
     /**
      * Display the colored lights, and set the color of the colored lights to match the use. After setting the color of the colored lights, the color of the lights must be displayed.
      */
     //% weight=12 blockId=qdee_belt_showLight block="Show light belt"
-    //% subcategory=Coloured_lights    
+    //% subcategory=Coloured_lights
     export function qdee_belt_showLight() {
         lhRGBLightBelt.show();
     }
@@ -1801,7 +1821,7 @@ namespace qdee {
      * Clear the color of the colored lights and turn off the lights.
      */
     //% weight=10 blockGap=50 blockId=qdee_belt_clearLight block="Clear light belt"
-    //% subcategory=Coloured_lights    
+    //% subcategory=Coloured_lights
     export function qdee_belt_clearLight() {
         lhRGBLightBelt.clear();
     }
