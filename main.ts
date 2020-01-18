@@ -314,7 +314,7 @@ namespace qdee {
     /**
      * Initialize the color sensor,please execute at boot time
      */
-    //% weight=99 blockId=qdee_init_colorSensor block="Initialize color sensor port at %port"
+    //% weight=99 blockId=qdee_init_colorSensor block="Initialize color sensor at %port"
     //% subcategory=Init
     export function qdee_init_colorSensor(port: colorSensorPort) {
         InitColor();
@@ -325,7 +325,7 @@ namespace qdee {
     /**
 	 * Initialize Light belt
 	 */
-    //% weight=98 blockId=qdee_belt_initRGBLight block="Initialize light belt at port %port"
+    //% weight=98 blockId=qdee_belt_initRGBLight block="Initialize light belt at %port"
     //% subcategory=Init
     export function qdee_belt_initRGBLight(port: lightbeltPort) {
         switch (port) {
@@ -735,7 +735,7 @@ namespace qdee {
    * Set fan speed
    * @param speed the speed of the fan in -100~100. eg: 80
    */
-    //% weight=88 blockId=qdee_fan_speed block="Set the fan|port %port|speed %speed"
+    //% weight=88 blockId=qdee_fan_speed block="Set the fan|%port|speed %speed"
     //% speed.min=-100 speed.max=100
     //% subcategory=Control
     export function qdee_fan_speed(port: fanPort, speed: number) {
@@ -1373,7 +1373,7 @@ namespace qdee {
     /**
     * Get the condition of the line follower sensor
     */
-    //% weight=58 blockGap=20 blockId=qdee_readLineFollowerStatus block="Line follower status|port %port|%status"
+    //% weight=58 blockGap=20 blockId=qdee_readLineFollowerStatus block="Line follower status|%port|%status"
     //% subcategory=Sensor
     export function qdee_readLineFollowerStatus(port: lineFollowPort, status: qdee_lineFollower): boolean {
         let s1 = 0;
@@ -1403,7 +1403,7 @@ namespace qdee {
     /**
      * Get the line follower sensor port ad value
      */
-    //% weight=56 blockId=qdee_lineSensorValue block="Get line follower sensor|port %port|%sensor|ad value"
+    //% weight=56 blockId=qdee_lineSensorValue block="Get line follower sensor|%port|%sensor|ad value"
    //% subcategory=Sensor
     export function qdee_lineSensorValue(port: lineFollowPort, sensor: LineFollowerSensor): number {
         let s1 = 0;
@@ -1424,7 +1424,7 @@ namespace qdee {
     /**
     * Get the condition of the touch button,press return 1,or return 0
     */
-    //% weight=54 blockGap=20 blockId=qdee_touchButton block=" Touch button|port %port|is pressed"
+    //% weight=54 blockGap=20 blockId=qdee_touchButton block=" Touch button|%port|is pressed"
     //% subcategory=Sensor
     export function qdee_touchButton(port: touchKeyPort): boolean {
         let status: boolean = false;
@@ -1455,7 +1455,7 @@ namespace qdee {
     /**
      * Get the distance of ultrasonic detection to the obstacle
      */
-    //% weight=52 blockId=qdee_ultrasonic  block="Ultrasonic|port %port|distance(cm)"
+    //% weight=52 blockId=qdee_ultrasonic  block="Ultrasonic|%port|distance(cm)"
     //% subcategory=Sensor
     export function qdee_ultrasonic(port: ultrasonicPort): number {
         let trigPin: DigitalPin = DigitalPin.P1;
@@ -1526,7 +1526,7 @@ namespace qdee {
     /**
     * Get the ad value of the knob moudule
     */
-    //% weight=50 blockId=qdee_getKnobValue blockGap=50 block="Get knob|port %port|value(0~255)"
+    //% weight=50 blockId=qdee_getKnobValue blockGap=50 block="Get knob|%port|value(0~255)"
     //% subcategory=Sensor
     export function qdee_getKnobValue(port: knobPort): number {
         let adValue = 0;
