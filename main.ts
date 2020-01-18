@@ -1548,7 +1548,7 @@ namespace qdee {
     /**
      * Set extension pins output high/low
      */
-     //% weight=89 blockId=Set_ext_pin_output block="set ext pin output|pin %pin|out %out"
+     //% weight=89 blockId=Set_ext_pin_output block="set ext pin output|%pin|out %out"
      //% out.min=0 out.max=1
      //% subcategory=Control
     export function qdee_ext_output(pin: extPins, out: number) {
