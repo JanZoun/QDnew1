@@ -735,7 +735,7 @@ namespace qdee {
    * Set fan speed
    * @param speed the speed of the fan in -100~100. eg: 80
    */
-    //% weight=88 blockId=qdee_fan_speed block="Set the fan|%port|speed %speed"
+    //% weight=88 blockId=qdee_fan_speed block="Set fan speed %port speed %speed"
     //% speed.min=-100 speed.max=100
     //% subcategory=Control
     export function qdee_fan_speed(port: fanPort, speed: number) {
